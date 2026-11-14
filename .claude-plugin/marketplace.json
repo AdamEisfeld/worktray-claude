@@ -1,0 +1,15 @@
+{
+  "name": "worktray",
+  "description": "Claude Code plugins for Worktray, the local-first developer scratchpad",
+  "owner": {
+    "name": "Adam Eisfeld",
+    "url": "https://worktray.io"
+  },
+  "plugins": [
+    {
+      "name": "worktray",
+      "source": "./plugins/worktray",
+      "description": "Open plans, reports, JSON, YAML, CSV, SVG and more in Worktray instead of the chat"
+    }
+  ]
+}

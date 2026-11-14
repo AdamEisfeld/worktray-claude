@@ -1,0 +1,77 @@
+---
+name: worktray
+description: Open content in Worktray, the user's local scratchpad app with rich editors for Markdown, JSON, YAML, CSV, SVG, HTML, task boards and more. Use when the user asks to open, show, view or review something in Worktray, or when their instructions (such as a CLAUDE.md) say to open certain kinds of output there. Otherwise don't open Worktray unprompted; after writing a long standalone document (a plan, report, spec or dataset the user will want to read or edit outside the chat), you may offer once to open it there.
+---
+
+# Worktray
+
+Worktray (https://worktray.io) is a local-first scratchpad. Its files are ordinary files on disk, grouped into **trays** — each desktop tray is a real folder — and each file opens in an editor chosen by its extension. Nothing the user opens or types leaves their machine.
+
+## Before opening anything
+
+Run `command -v worktray`. If it isn't found, skip to "Without the desktop command" below.
+
+## Choose how to open it
+
+**Content you produced, for the user to read or tweak — the usual case.** Pipe it in:
+
+```sh
+worktray - dark-mode-plan.md <<'EOF'
+# Dark-mode screenshots
+...
+EOF
+```
+
+- It becomes a new file in the user's **Inbox** tray (`~/Worktray/Inbox`), opens immediately, and the command prints the file's absolute path. Remember that path.
+- The name is optional (default: a timestamped `.md`). A name without an extension gets `.md`. A taken name gets a `-2` suffix — nothing is overwritten. Only the base name is used; folders in the name are dropped.
+- Use this for a **copy** of an existing file too, when the user only wants to read it: `worktray - notes.md < path/to/notes.md`.
+
+**An existing file the user wants to edit in place**: `worktray path/to/file`. Know what this does before using it:
+
+- Worktray opens **the file's whole folder as a tray** (or the user's existing tray for a folder above it) and selects the file. In a code repository that means the entire repo becomes a tray, which can take several seconds and adds a tray to the user's list. The first time a folder is opened, the user has to confirm.
+- So use it only when the user wants to work on the real file, not just look at it — otherwise pipe a copy.
+
+**A folder**: `worktray path/to/folder` opens it as a tray (same confirm on first open).
+
+The command returns immediately; don't wait for it or poll for the window.
+
+## After opening
+
+Edits in Worktray save straight to disk. If the user may have edited the file — the Inbox copy or a file opened in place — re-read it from its path before changing it, and never overwrite it from your own earlier version.
+
+## Pick the extension for the editor
+
+| Extension | Editor |
+| --- | --- |
+| `.md` | Markdown source with a rendered GitHub-Flavored preview |
+| `.txt` | Plain text |
+| `.json` | JSON with validation, pretty-print and a tree view |
+| `.yaml` / `.yml` | YAML with formatting and a tree view |
+| `.xml` | XML source and element tree |
+| `.csv` / `.tsv` | Raw text or an interactive table |
+| `.svg` | SVG source, or a visual canvas for drawing and arranging shapes |
+| `.html` | HTML source with a sandboxed live preview |
+| `.js` / `.ts` | Code the user can run in an isolated console |
+| `.css` | CSS |
+| `.sql` | SQL formatting only (no database connection) |
+| `.env` | Key/value form or raw text |
+| `.jwt` | Decodes a JSON Web Token locally (the file holds just the token) |
+| `.curl` | A single `curl …` command, shown as parsed fields; the Mac app can send it |
+| `.openapi` | An OpenAPI/Swagger spec (YAML or JSON) as searchable endpoint cards |
+| `.task` | One ticket: `{"title": "…", "description": "…", "status": "pending"}` — status is `pending`, `in-progress`, `complete` or `cancelled` |
+| `.taskboard` | A board, `{"name": "…"}`, showing the `.task` files **in the same folder** as columns by status |
+| `.png` `.jpg` `.webp` `.bmp` / `.pdf` | Images (simple edits) and a PDF reader — open existing files; don't pipe binary data |
+
+Any other extension is kept, but opens as a placeholder rather than an editor — use `.txt` for plain text such as logs.
+
+**Several related files** (for example a `.taskboard` and its `.task` tickets): `worktray -` puts every file loose in the Inbox, and a board there would gather every ticket in the Inbox. Instead, write the files into their own folder — for example `~/Worktray/<project-name>/` — and open that folder with `worktray ~/Worktray/<project-name>` (the user confirms once).
+
+## Without the desktop command
+
+The web app can import one file from a link. The content travels in the URL fragment (after `#`), which browsers never send to a server, but it stays in browser history — so only use this for small, non-sensitive text, and say so:
+
+```sh
+python3 -c 'import sys, urllib.parse, webbrowser; webbrowser.open("https://worktray.io/#new=" + urllib.parse.quote(sys.argv[1]) + "&content=" + urllib.parse.quote(sys.stdin.read()))' notes.md < notes.md
+```
+
+Worktray asks the user before adding the file to their current tray. If neither route fits, tell the user the desktop app's `worktray` command can be installed from Worktray's command palette (Cmd+K, then type `>`).
