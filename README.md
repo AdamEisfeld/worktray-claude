@@ -15,13 +15,7 @@ For the best experience, install the [Worktray desktop app for Mac](https://work
 
 ## Use
 
-Ask Claude to "open that in Worktray". By default the skill only opens Worktray when you ask; to have Claude open certain kinds of output every time, add an instruction to your `CLAUDE.md` — see [the Worktray docs](https://docs.worktray.io/opening-content/#let-claude-code-open-things-in-worktray-mac).
-
-If you previously installed the skill from inside Worktray (**Install the Claude Code skill**), remove that copy so you don't have two:
-
-```sh
-rm -r ~/.claude/skills/worktray
-```
+The plugin adds one skill, `worktray:open`. Ask Claude to "open that in Worktray". By default the skill only opens Worktray when you ask; to have Claude open certain kinds of output every time, add an instruction to your `CLAUDE.md` — see [the Worktray docs](https://docs.worktray.io/opening-content/#let-claude-code-open-things-in-worktray).
 
 ## Updating
 

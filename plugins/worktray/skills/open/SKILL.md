@@ -1,5 +1,5 @@
 ---
-name: worktray
+name: open
 description: Open content in Worktray, the user's local scratchpad app with rich editors for Markdown, JSON, YAML, CSV, SVG, HTML, task boards and more. Use when the user asks to open, show, view or review something in Worktray, or when their instructions (such as a CLAUDE.md) say to open certain kinds of output there. Otherwise don't open Worktray unprompted; after writing a long standalone document (a plan, report, spec or dataset the user will want to read or edit outside the chat), you may offer once to open it there.
 ---
 
