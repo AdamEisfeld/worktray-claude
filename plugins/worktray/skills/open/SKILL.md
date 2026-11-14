@@ -11,12 +11,14 @@ Worktray (https://worktray.io) is a local-first scratchpad. Its files are ordina
 
 Run `command -v worktray`. If it isn't found, skip to "Without the desktop command" below.
 
+Then check the installed command knows `--view`: `grep -q -- --view "$(command -v worktray)"`. If it doesn't, the command predates Worktray 0.1.30. Leave `--view`/`--edit` out (an old command would treat `--view` as a file name), and mention once that reinstalling the command from Worktray's command palette adds it.
+
 ## Choose how to open it
 
 **Content you produced, for the user to read or tweak — the usual case.** Pipe it in:
 
 ```sh
-worktray - dark-mode-plan.md <<'EOF'
+worktray - --view dark-mode-plan.md <<'EOF'
 # Dark-mode screenshots
 ...
 EOF
@@ -24,7 +26,7 @@ EOF
 
 - It becomes a new file in the user's **Inbox** tray (`~/Worktray/Inbox`), opens immediately, and the command prints the file's absolute path. Remember that path.
 - The name is optional (default: a timestamped `.md`). A name without an extension gets `.md`. A taken name gets a `-2` suffix — nothing is overwritten. Only the base name is used; folders in the name are dropped.
-- Use this for a **copy** of an existing file too, when the user only wants to read it: `worktray - notes.md < path/to/notes.md`.
+- Use this for a **copy** of an existing file too, when the user only wants to read it: `worktray - --view notes.md < path/to/notes.md`.
 
 **An existing file the user wants to edit in place**: `worktray path/to/file`. Know what this does before using it:
 
@@ -35,32 +37,41 @@ EOF
 
 The command returns immediately; don't wait for it or poll for the window.
 
+## Choose the tab: `--view` or `--edit`
+
+Most editors have two tabs: an editing tab showing the file's source, and a viewing tab (Markdown's rendered preview, a JSON tree, a CSV table and so on; see the table below). `--view` opens the file on its viewing tab and `--edit` on its editing tab. The flag works anywhere among the arguments: `worktray - --view plan.md`, `worktray --view path/to/file`.
+
+- Pass `--view` when the user will mainly **read**: a plan, report, review or write-up in Markdown, or data to look over.
+- Pass `--edit`, or nothing, when they'll **change** the text: a draft to tweak, a message to edit before pasting, a config.
+- Without a flag, each editor opens on its usual tab, which for Markdown is the source.
+- Editors with one view (plain text, code, images, PDFs) ignore it. It does nothing for folders.
+
 ## After opening
 
 Edits in Worktray save straight to disk. If the user may have edited the file — the Inbox copy or a file opened in place — re-read it from its path before changing it, and never overwrite it from your own earlier version.
 
 ## Pick the extension for the editor
 
-| Extension | Editor |
-| --- | --- |
-| `.md` | Markdown source with a rendered GitHub-Flavored preview |
-| `.txt` | Plain text |
-| `.json` | JSON with validation, pretty-print and a tree view |
-| `.yaml` / `.yml` | YAML with formatting and a tree view |
-| `.xml` | XML source and element tree |
-| `.csv` / `.tsv` | Raw text or an interactive table |
-| `.svg` | SVG source, or a visual canvas for drawing and arranging shapes |
-| `.html` | HTML source with a sandboxed live preview |
-| `.js` / `.ts` | Code the user can run in an isolated console |
-| `.css` | CSS |
-| `.sql` | SQL formatting only (no database connection) |
-| `.env` | Key/value form or raw text |
-| `.jwt` | Decodes a JSON Web Token locally (the file holds just the token) |
-| `.curl` | A single `curl …` command, shown as parsed fields; the Mac app can send it |
-| `.openapi` | An OpenAPI/Swagger spec (YAML or JSON) as searchable endpoint cards |
-| `.task` | One ticket: `{"title": "…", "description": "…", "status": "pending"}` — status is `pending`, `in-progress`, `complete` or `cancelled` |
-| `.taskboard` | A board, `{"name": "…"}`, showing the `.task` files **in the same folder** as columns by status |
-| `.png` `.jpg` `.webp` `.bmp` / `.pdf` | Images (simple edits) and a PDF reader — open existing files; don't pipe binary data |
+| Extension | Editor | `--view` shows |
+| --- | --- | --- |
+| `.md` | Markdown source with a rendered GitHub-Flavored preview | Preview |
+| `.txt` | Plain text | — |
+| `.json` | JSON with validation, pretty-print and a tree view | Tree |
+| `.yaml` / `.yml` | YAML with formatting and a tree view | Tree |
+| `.xml` | XML source and element tree | Tree |
+| `.csv` / `.tsv` | Raw text or an interactive table | Table (default) |
+| `.svg` | SVG source, or a visual canvas for drawing and arranging shapes | Design canvas (default) |
+| `.html` | HTML source with a sandboxed live preview | Preview |
+| `.js` / `.ts` | Code the user can run in an isolated console | — |
+| `.css` | CSS | — |
+| `.sql` | SQL formatting only (no database connection) | — |
+| `.env` | Key/value form or raw text | Form (default) |
+| `.jwt` | Decodes a JSON Web Token locally (the file holds just the token) | Decoded |
+| `.curl` | A single `curl …` command, shown as parsed fields; the Mac app can send it | Fields |
+| `.openapi` | An OpenAPI/Swagger spec (YAML or JSON) as searchable endpoint cards | Explore (default) |
+| `.task` | One ticket: `{"title": "…", "description": "…", "status": "pending"}` — status is `pending`, `in-progress`, `complete` or `cancelled` | Ticket (default) |
+| `.taskboard` | A board, `{"name": "…"}`, showing the `.task` files **in the same folder** as columns by status | — |
+| `.png` `.jpg` `.webp` `.bmp` / `.pdf` | Images (simple edits) and a PDF reader — open existing files; don't pipe binary data | — |
 
 Any other extension is kept, but opens as a placeholder rather than an editor — use `.txt` for plain text such as logs.
 
