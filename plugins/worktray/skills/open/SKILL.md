@@ -71,7 +71,7 @@ Edits in Worktray save straight to disk. If the user may have edited the file �
 | `.openapi` | An OpenAPI/Swagger spec (YAML or JSON) as searchable endpoint cards | Explore (default) |
 | `.task` | One ticket: `{"title": "…", "description": "…", "status": "pending"}` — status is `pending`, `in-progress`, `complete` or `cancelled` | Ticket (default) |
 | `.taskboard` | A board, `{"name": "…"}`, showing the `.task` files **in the same folder** as columns by status | — |
-| `.png` `.jpg` `.webp` `.bmp` / `.pdf` | Images (simple edits) and a PDF reader — open existing files; don't pipe binary data | — |
+| `.png` `.jpg` `.webp` `.bmp` / `.pdf` / `.wav` `.mp3` `.m4a` `.ogg` `.flac` | Images (simple edits), a PDF reader, and an audio player with waveform and trimming — open existing files; don't pipe binary data | — |
 
 Any other extension is kept, but opens as a placeholder rather than an editor — use `.txt` for plain text such as logs.
 
