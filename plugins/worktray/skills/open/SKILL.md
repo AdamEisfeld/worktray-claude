@@ -1,6 +1,6 @@
 ---
 name: open
-description: Open content in Worktray, the user's local scratchpad app with rich editors for Markdown, JSON, YAML, CSV, SVG, HTML, task boards and more. Use when the user asks to open, show, view or review something in Worktray, or when their instructions (such as a CLAUDE.md) say to open certain kinds of output there. Otherwise don't open Worktray unprompted; after writing a long standalone document (a plan, report, spec or dataset the user will want to read or edit outside the chat), you may offer once to open it there.
+description: Open content in Worktray, the user's local scratchpad app with rich editors for Markdown, JSON, YAML, CSV, SVG, HTML, task boards and more. Use when the user asks to open, show, view or review something in Worktray, when their instructions (such as a CLAUDE.md) say to open certain kinds of output there, or to quietly show them a result worth looking at while you work (`--background`). Otherwise don't open Worktray unprompted; after writing a long standalone document (a plan, report, spec or dataset the user will want to read or edit outside the chat), you may offer once to open it there.
 ---
 
 # Worktray
@@ -12,6 +12,8 @@ Worktray (https://worktray.io) is a local-first scratchpad. Its files are ordina
 Run `command -v worktray`. If it isn't found, skip to "Without the desktop command" below.
 
 Then check the installed command knows `--view`: `grep -q -- --view "$(command -v worktray)"`. If it doesn't, the command predates Worktray 0.1.30. Leave `--view`/`--edit` out (an old command would treat `--view` as a file name), and mention once that reinstalling the command from Worktray's command palette adds it.
+
+Check `--background` the same way before using it: `grep -q -- --background "$(command -v worktray)"`. Commands installed before Worktray 0.1.37 don't know it; leave it out and open normally.
 
 ## Choose how to open it
 
@@ -36,6 +38,15 @@ EOF
 **A folder**: `worktray path/to/folder` opens it as a tray (same confirm on first open).
 
 The command returns immediately; don't wait for it or poll for the window.
+
+## Show without interrupting: `--background`
+
+Add `--background` to any of the commands above (`worktray --background path/to/file`, `worktray - --background --view notes.md`) to open it exactly the same way, but without bringing Worktray to the front. The user keeps typing in the terminal and looks when they're ready. If Worktray wasn't running, it may still come to the front as it starts; that's expected.
+
+- Use it while you work, to show the user something worth seeing: an HTML page you built, a diagram, a data file you generated, the plan you're about to follow. Then tell them in one line what you put in Worktray.
+- This is the one case where you may open Worktray without being asked. Pick moments; don't run it after every edit. A few times in a task is plenty.
+- Leave it off when the user asked to see something now. A normal open brings the window forward.
+- The rules above still apply: an existing file opens its whole folder as a tray (the user confirms a new folder once), so for something they only need to read, pipe a copy.
 
 ## Choose the tab: `--view` or `--edit`
 
